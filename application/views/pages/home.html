@@ -1,5 +1,195 @@
 {% extends "common/base.html" %}
 
-{% block content %}
-<p>MAPITA SEXY AQUI</p>
+{% block css_files %}
+<link type="text/css" rel="stylesheet" href="{{ base_urls_list.static_css }}leaflet/leaflet.min.css" />
+{% endblock %}
+
+{% block main %}
+<section class="row">
+  <article class="col-12" id="location-cards"></article>
+</section>
+<section class="row mt-4">
+  <article class="col-12">
+    <div id="locationMap" style="min-height: 300px;"></div>
+  </article>
+</section>
+{% endblock %}
+
+{% block js_scripts %}
+<script src="{{ base_urls_list.static_js }}leaflet/leaflet.min.js"></script>
+<script>
+  $(function () {
+    function titleCase(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+    }
+
+    function leafletSetPopups(mapObj, markersObj, markersInfo) {
+      let htmlPopup = "";
+
+      for (let i = 0; i < markersObj.length; i++) {
+        htmlPopup = "";
+        for (let markerInfo in markersInfo[i]) {
+          htmlPopup += `<p><b>${titleCase(markerInfo).replace('_', ' ')}: </b>${markersInfo[i][markerInfo]}</p>`;
+          markersObj[i].bindPopup(htmlPopup);
+        }
+      }
+      return true;
+    }
+
+    function leafletSetMarkers(mapObj, locations) {
+      try {
+        var markers = [];
+
+        for (let location of locations) {
+          markers.push(L.marker([location[0], location[1]]).addTo(mapObj));
+        }
+
+        return markers;
+      } catch (e) {
+        console.log(e);
+        return undefined;
+      }
+    }
+
+    function initLeaflet(lat = 0.00, lon = 0.00, zoom = 3) {
+      let accessToken = 'pk.eyJ1IjoibXJyb290NSIsImEiOiJjanJwNmZtMXAwNnJ2M3lwODlpcHhiOWVnIn0.Q6AKQl2GFMCmGIamK6Qy6A',
+      mymap;
+
+      mymap = L.map('locationMap').setView([lat, lon], zoom);
+
+      L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=' + accessToken, {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        zoom: 18,
+        maxZoom: 18,
+        id: 'mapbox.streets',
+        accessToken: accessToken
+      }).addTo(mymap);
+
+      return mymap;
+    }
+
+    function resizeMapHeight() {
+      let navbarHeight = document.querySelector("header").offsetHeight;
+      // Add 100 extra pixels for header
+      navbarHeight += 100;
+
+      document.querySelector("#locationMap").style.height = "calc(100vh - " + (navbarHeight + 100) + "px)";
+    }
+
+    function main() {
+      let locations = [["28.291565", "-16.629129"], ["0.000000", "0.000000"]],
+      initLatitude = locations[0][0], initLongitude = locations[0][1], initZoom = 12,
+      leafletMarkersLocations = [], leafletMarkersPopupInfo = [],
+      leafletMap, leafletMarkers, last_update_date;//, d
+
+      resizeMapHeight();
+      // Leaflet
+      leafletMap = initLeaflet(initLatitude, initLongitude, initZoom);
+      for (let element of locations) {
+        leafletMarkersLocations.push(element);
+        leafletMarkersPopupInfo.push({
+          "longitude": element[0],
+          "latitude": element[1]
+        });
+        {# last_update_date = new Date("{{ element.last_update|raw }}"); #}
+        {# last_update_date = last_update_date.toDateString(); #}
+
+      }
+
+      leafletMarkers = leafletSetMarkers(leafletMap, leafletMarkersLocations);
+      leafletSetPopups(leafletMap, leafletMarkers, leafletMarkersPopupInfo);
+      leafletMap.on('click', function(e) {
+        let openStreetMapReverseGeocodeUrl = new URL('https://nominatim.openstreetmap.org/reverse/'),
+        fetchInit = {};
+
+        fetchData = {
+          "format": "json",
+          "lat": e.latlng.lat,
+          "lon": e.latlng.lng,
+          "zoom": 18,
+          "addressdetails": 1
+        }
+
+        fetchInit = {
+          method: 'GET',
+          mode: 'cors',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        };
+
+        Object.keys(fetchData).forEach(key => openStreetMapReverseGeocodeUrl.searchParams.append(key, fetchData[key]))
+
+        fetch(openStreetMapReverseGeocodeUrl, fetchInit)
+        .then(function (response) {
+          if (response.ok && response.status === 200) {
+            response.json().then(function (data) {
+              let error_msgs = {
+                "general": "Error location: sorry we couldn't get a location",
+                "geocode": "Error geocode: sorry we coudln't get geocode info"
+              },
+              cardsHtmlElement = document.querySelector("#location-cards"),
+              cardsHtmlChildren,
+              insertChildRow = false,
+              bs4Viewpoint = Utils.bs4Env(),
+              bs4Col = 'col',
+              htmlCardTemplate;
+
+              if (data.error) {
+                alert(error_msgs.general);
+              } else {
+                try {
+                  if (bs4Viewpoint != 'xl' && bs4Viewpoint != 'xl') {
+                    bs4Col = 'col-12';
+                  }
+                  console.log(bs4Col);
+
+                  htmlCardTemplate = `<div class="${bs4Col} card mx-1">
+                    <div class="card-body">
+                      <h5 class="card-title">${data.display_name}</h5>
+                      <h6 class="card-subtitle mb-2 text-muted">${data.lat}, ${data.lon}</h6>
+                      <div class="card-text">
+                        <pre><i class="fas fa-info"></i> ${JSON.stringify(data.address, null, 2)}</pre>
+                      </div>
+                    </div>
+                  </div>`;
+                  if (cardsHtmlElement.childElementCount === 0) {
+                    insertChildRow = true;
+                    htmlCardTemplate = `<div class="row">` + htmlCardTemplate + `</div>`;
+                  } else {
+                    cardsHtmlChildren = cardsHtmlElement.querySelectorAll(".row");
+                    cardsHtmlChildren = cardsHtmlChildren[cardsHtmlChildren.length - 1];
+
+                    if (cardsHtmlChildren.childElementCount === 4) {
+                      insertChildRow = true;
+                      htmlCardTemplate = `<div class="row">` + htmlCardTemplate + `</div>`;
+                    }
+                  }
+
+                  if (insertChildRow) {
+                    cardsHtmlElement.insertAdjacentHTML('beforeend', htmlCardTemplate);
+                  } else {
+                    cardsHtmlChildren.insertAdjacentHTML('beforeend', htmlCardTemplate);
+                  }
+                } catch (e) {
+                  if (e instanceof TypeError) {
+                    console.log(e);
+                    alert(error_msgs.geocode);
+                  } else {
+                    console.log(e);
+                    alert(error_msgs.general);
+                  }
+                }
+              }
+            });
+          }
+        })
+        .catch(error => console.error('Error:', error));
+      });
+      // /Leaflet
+    }
+
+    document.addEventListener("DOMContentLoaded", main);
+  }());
+</script>
 {% endblock %}

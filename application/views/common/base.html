@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -44,13 +44,13 @@
     {% endblock %}
   </main>
   <!-- BEGIN .main-footer -->
-  <footer class="fixed-bottom fixed-btm w-100 py-3 bg-light text-dark">
+  <footer class="fixed-bottom fixed-btm w-100 bg-light text-dark text-center">
       <div class="container">
         <div class="row w-100 h-100 d-flex justify-content-center align-items-center">
-          <div class="col-3">
+          <div class="col-12 col-lg-4 py-1 py-lg-3">
             <span>&copy; Copyright <span id="footer-year"></span></span>
           </div>
-          <div class="col-5">
+          <div class="col-12 col-lg-4 py-1 py-lg-3">
             <div class="row gutters">
               <div class="col">
               </div>
@@ -63,7 +63,7 @@
               </div>
             </div>
           </div>
-          <div class="col-4">
+          <div class="col-12 col-lg-4 py-1 py-lg-3">
             <div class="row gutters">
               <div class="col">
                 <a href="#">
@@ -86,9 +86,10 @@
       </div>
     </footer>
     <!-- END: .main-footer -->
-  <script src="{{ base_urls_list.jquery }}" crossorigin="anonymous"></script>
+  <script src="{{ base_urls_list.jquery }}"></script>
   <!-- Popperjs + Bootstrap 4 -->
   <script src="{{ base_urls_list.bootstrap_js }}"></script>
+  <script src="{{ base_urls_list.static_js }}main.js"></script>
   <script>
     $(function() {
       function insertCurrentYear() {
