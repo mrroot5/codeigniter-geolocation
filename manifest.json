@@ -1,0 +1,10 @@
+{
+  "name": "Codeigniter Geolocation",
+  "short_name": "CI Geo",
+  "description": "Codeigniter basic geolocation implementation with Leaflet and OpenStreetMap",
+  "theme_color": "#dd4814",
+  "background_color": "#dd4814",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/codeigniter-geolocation"
+}
