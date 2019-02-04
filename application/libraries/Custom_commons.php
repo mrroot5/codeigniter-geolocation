@@ -6,6 +6,7 @@ class Custom_commons
 {
     public function get_base_template_urls():array {
         return array(
+            "base" => base_url(),
             "static_js" => base_url('static/js/'),
             "static_css" => base_url('static/css/'),
             "static_images" => base_url('static/images/'),
