@@ -8,30 +8,30 @@
   "scope": "/",
   "icons": [
     {
-      "src": "/codeigniter-geolocation/static/images/ci-icon-big-48.png",
+      "src": "/codeigniter-geolocation/static/images/ci-logo-big-48.png",
       "type": "image/png",
       "sizes": "48x48"
     },
     {
-      "src": "/codeigniter-geolocation/static/images/ci-icon-big-96.png",
+      "src": "/codeigniter-geolocation/static/images/ci-logo-big-96.png",
       "type": "image/png",
       "sizes": "96x96"
     },
     {
-      "src": "/codeigniter-geolocation/static/images/ci-icon-big-192.png",
+      "src": "/codeigniter-geolocation/static/images/ci-logo-big-192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "/codeigniter-geolocation/static/images/ci-icon-big-128.png",
+      "src": "/codeigniter-geolocation/static/images/ci-logo-big-128.png",
       "type": "image/png",
       "sizes": "128x128"
     }, {
-      "src": "/codeigniter-geolocation/static/images/ci-icon-big-152.png",
+      "src": "/codeigniter-geolocation/static/images/ci-logo-big-152.png",
       "type": "image/png",
       "sizes": "152x152"
     }, {
-      "src": "/codeigniter-geolocation/static/images/ci-icon-big-144.png",
+      "src": "/codeigniter-geolocation/static/images/ci-logo-big-144.png",
       "type": "image/png",
       "sizes": "144x144"
     }
