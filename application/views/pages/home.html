@@ -77,8 +77,8 @@
     }
 
     function main() {
-      let locations = [["28.291565", "-16.629129"], ["0.000000", "0.000000"]],
-      initLatitude = locations[0][0], initLongitude = locations[0][1], initZoom = 12,
+      let locations = {{ geolocation_list|raw|default([]) }},
+      initLatitude = locations[0][0], initLongitude = locations[0][1], initZoom = 5,
       leafletMarkersLocations = [], leafletMarkersPopupInfo = [],
       leafletMap, leafletMarkers, last_update_date;//, d
 
