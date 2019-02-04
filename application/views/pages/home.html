@@ -77,10 +77,19 @@
     }
 
     function main() {
-      let locations = {{ geolocation_list|raw|default([]) }},
-      initLatitude = locations[0][0], initLongitude = locations[0][1], initZoom = 5,
+      let locations = [],
+      initLatitude, initLongitude, initZoom = 5,
       leafletMarkersLocations = [], leafletMarkersPopupInfo = [],
       leafletMap, leafletMarkers, last_update_date;//, d
+
+      {% for element in geolocation_list %}
+
+      locations.push(["{{ element["latitude"] }}", "{{ element["longitude"] }}"]);
+
+      {% endfor %}
+
+      initLatitude = locations[0][0];
+      initLongitude = locations[0][1];
 
       resizeMapHeight();
       // Leaflet
@@ -142,9 +151,8 @@
                   if (bs4Viewpoint != 'xl' && bs4Viewpoint != 'xl') {
                     bs4Col = 'col-12';
                   }
-                  console.log(bs4Col);
 
-                  htmlCardTemplate = `<div class="${bs4Col} card mx-1">
+                  htmlCardTemplate = `<div class="${bs4Col} card m-1">
                     <div class="card-body">
                       <h5 class="card-title">${data.display_name}</h5>
                       <h6 class="card-subtitle mb-2 text-muted">${data.lat}, ${data.lon}</h6>

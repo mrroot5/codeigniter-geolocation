@@ -2,7 +2,7 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Home extends CI_Model {
+class Home_model extends CI_Model {
 
 
     public function __construct() {
@@ -21,4 +21,4 @@ class Home extends CI_Model {
     }
 }
 
-/* End of file Home.php */
+/* End of file Home_model.php */
